@@ -25,7 +25,10 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_this"></a> [this](#module\_this) | ../../ | n/a |
+| <a name="module_network"></a> [network](#module\_network) | libre-devops/network/azurerm | ~> 4.0 |
+| <a name="module_rg"></a> [rg](#module\_rg) | libre-devops/rg/azurerm | ~> 4.0 |
+| <a name="module_subnet_calculator"></a> [subnet\_calculator](#module\_subnet\_calculator) | ../../ | n/a |
+| <a name="module_tags"></a> [tags](#module\_tags) | libre-devops/tags/azurerm | ~> 4.0 |
 
 ## Resources
 
@@ -35,6 +38,8 @@ No resources.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_deployed_branch"></a> [deployed\_branch](#input\_deployed\_branch) | Git branch the deployment came from. Auto-filled in CI from TF\_VAR\_deployed\_branch. | `string` | `""` | no |
+| <a name="input_deployed_repo"></a> [deployed\_repo](#input\_deployed\_repo) | Repository URL the deployment came from. Auto-filled in CI from TF\_VAR\_deployed\_repo. | `string` | `""` | no |
 | <a name="input_loc"></a> [loc](#input\_loc) | Outfix: short Azure region code used in resource names (for example uks). | `string` | `"uks"` | no |
 | <a name="input_regions"></a> [regions](#input\_regions) | Map of short region codes to Azure region slugs. | `map(string)` | <pre>{<br/>  "eus": "eastus",<br/>  "euw": "westeurope",<br/>  "uks": "uksouth",<br/>  "ukw": "ukwest"<br/>}</pre> | no |
 | <a name="input_short"></a> [short](#input\_short) | Infix: short product code used in resource names. | `string` | `"ldo"` | no |
@@ -43,6 +48,8 @@ No resources.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_ids"></a> [ids](#output\_ids) | Map of resource group name to id. |
-| <a name="output_names"></a> [names](#output\_names) | Map of resource group name to name. |
+| <a name="output_calculated_subnets"></a> [calculated\_subnets](#output\_calculated\_subnets) | The calculator's per-subnet facts (cidr, usable IPs, etc.). |
+| <a name="output_subnet_ids"></a> [subnet\_ids](#output\_subnet\_ids) | Map of subnet name to id, as created in Azure. |
+| <a name="output_tags"></a> [tags](#output\_tags) | The tags applied to the resources. |
+| <a name="output_vnet_id"></a> [vnet\_id](#output\_vnet\_id) | The id of the virtual network built from the calculated subnets. |
 <!-- END_TF_DOCS -->

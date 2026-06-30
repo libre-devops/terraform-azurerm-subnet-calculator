@@ -18,33 +18,70 @@
   </a>
 </div>
 
-# Terraform Module Template
+# Terraform Azure Subnet Calculator
 
-A starting point for Libre DevOps Terraform modules: the standard file layout, examples, tests, and tooling.
+Calculates non-overlapping Azure subnet CIDRs from a base address space, the companion to the network
+module. Pure computation, no resources.
 
-[![CI](https://github.com/libre-devops/terraform-module-template/actions/workflows/ci.yml/badge.svg)](https://github.com/libre-devops/terraform-module-template/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/libre-devops/terraform-module-template?sort=semver&label=release)](https://github.com/libre-devops/terraform-module-template/releases/latest)
+[![CI](https://github.com/libre-devops/terraform-azurerm-subnet-calculator/actions/workflows/ci.yml/badge.svg)](https://github.com/libre-devops/terraform-azurerm-subnet-calculator/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/libre-devops/terraform-azurerm-subnet-calculator?sort=semver&label=release)](https://github.com/libre-devops/terraform-azurerm-subnet-calculator/releases/latest)
 [![Terraform Registry](https://img.shields.io/badge/registry-libre--devops-7B42BC?logo=terraform&logoColor=white)](https://registry.terraform.io/namespaces/libre-devops)
-[![License](https://img.shields.io/github/license/libre-devops/terraform-module-template)](./LICENSE)
+[![License](https://img.shields.io/github/license/libre-devops/terraform-azurerm-subnet-calculator)](./LICENSE)
 
 ---
+
+## Overview
+
+Give it a base CIDR and a list of subnet sizes and it carves them out **sequentially and
+non-overlapping** (via `cidrsubnets`, so mixed sizes are handled correctly), names them with your
+`snet-` convention, and emits an output shaped to drop **straight into the network module**. IPv4 and
+IPv6.
+
+- **Quick:** "give me three /26s", sizes only, auto-named `snet-001..` (prefix overridable via
+  `subnet_name_prefix`).
+- **Convention names:** give a `purpose` (+ `vnet_name`) and get `snet-<purpose>-<vnet_name>`.
+- **Pin what must not move:** set a `netnum` to fix a subnet at an explicit offset; everything else
+  stays sequential. Sequential allocation is **append-only** (inserting shifts later subnets), so pin
+  the stable ones.
+- **Azure-aware facts:** usable host count and first-usable IP account for Azure's 5 reserved
+  addresses per subnet (smallest IPv4 subnet is `/29`).
 
 ## Usage
 
 ```hcl
-module "this" {
-  source = "libre-devops/<module>/azurerm"
+module "subnet_calculator" {
+  source  = "libre-devops/subnet-calculator/azurerm"
+  version = "~> 4.0"
 
-  name     = "rg-ldo-uks-dev-01"
-  location = "uksouth"
-  tags     = { environment = "dev" }
+  base_cidr = "10.0.0.0/24"
+  vnet_name = "vnet-ldo-uks-prd-001"
+
+  subnets = [
+    { purpose = "app", size = 26 },
+    { purpose = "data", size = 27 },
+    { purpose = "gw", size = 27, netnum = 7 }, # pinned, never moves
+  ]
+}
+
+module "network" {
+  source  = "libre-devops/network/azurerm"
+  version = "~> 4.0"
+
+  resource_group_id = module.rg.ids["rg-ldo-uks-prd-001"]
+  location          = "uksouth"
+  tags              = module.tags.tags
+
+  vnet_name     = "vnet-ldo-uks-prd-001"
+  address_space = [module.subnet_calculator.base_cidr]
+  subnets       = module.subnet_calculator.network_subnets
 }
 ```
 
 ## Examples
 
-- [`examples/minimal`](./examples/minimal) - the smallest valid call (required inputs only).
-- [`examples/complete`](./examples/complete) - every supported input exercised.
+- [`examples/minimal`](./examples/minimal) - "give me three /26s" (pure calculation).
+- [`examples/complete`](./examples/complete) - the companion flow: calculate subnets, then build the
+  vnet and subnets from them with the network module.
 
 ## Developing
 

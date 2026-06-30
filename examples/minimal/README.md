@@ -14,7 +14,6 @@ applies the stack then always destroys it.
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0, < 2.0.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 4.0.0, < 5.0.0 |
 
 ## Providers
 
@@ -24,7 +23,7 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_this"></a> [this](#module\_this) | ../../ | n/a |
+| <a name="module_subnet_calculator"></a> [subnet\_calculator](#module\_subnet\_calculator) | ../../ | n/a |
 
 ## Resources
 
@@ -32,16 +31,13 @@ No resources.
 
 ## Inputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_loc"></a> [loc](#input\_loc) | Outfix: short Azure region code used in resource names (for example uks). | `string` | `"uks"` | no |
-| <a name="input_regions"></a> [regions](#input\_regions) | Map of short region codes to Azure region slugs. | `map(string)` | <pre>{<br/>  "eus": "eastus",<br/>  "euw": "westeurope",<br/>  "uks": "uksouth",<br/>  "ukw": "ukwest"<br/>}</pre> | no |
-| <a name="input_short"></a> [short](#input\_short) | Infix: short product code used in resource names. | `string` | `"ldo"` | no |
+No inputs.
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_ids"></a> [ids](#output\_ids) | Map of resource group name to id. |
-| <a name="output_names"></a> [names](#output\_names) | Map of resource group name to name. |
+| <a name="output_cidrs"></a> [cidrs](#output\_cidrs) | The calculated subnet CIDRs, in order. |
+| <a name="output_network_subnets"></a> [network\_subnets](#output\_network\_subnets) | Shaped to drop into the network module's subnets input. |
+| <a name="output_subnets"></a> [subnets](#output\_subnets) | Full per-subnet facts (cidr, usable IPs, etc.). |
 <!-- END_TF_DOCS -->

@@ -147,7 +147,7 @@ e2e stack="minimal":
     }
 
     $path = 'examples/{{ stack }}'
-    $key = 'terraform-module-template-{{ stack }}.tfstate'
+    $key = 'terraform-azurerm-subnet-calculator-{{ stack }}.tfstate'
     $added = $false
     try {
         Add-LdoStorageCurrentIpRule -ResourceGroup $rg -StorageAccountName $sa
@@ -225,7 +225,7 @@ _run op stack ws:
     }
 
     $path = 'examples/{{ stack }}'
-    $key = 'terraform-module-template-{{ stack }}.tfstate'
+    $key = 'terraform-azurerm-subnet-calculator-{{ stack }}.tfstate'
     $added = $false
     try {
         Add-LdoStorageCurrentIpRule -ResourceGroup $rg -StorageAccountName $sa
